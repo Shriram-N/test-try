@@ -1,0 +1,31 @@
+{% extends 'uml/base.html' %}
+
+
+{% block content %}
+    {% if class_details and service %}
+
+        <div class = "container">
+            <div class="row mt-4">
+                {% for class_name,class_values in class_details.items %}
+                <div class="col-xs-0 col-md-4 mt-5">
+
+                        <div class="card text-white bg-success h-100" >
+                            <div class="card-header">{{class_values|last}}</div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ class_name }}</h5>
+                                {% for class_value in class_values|slice:":-1"%}
+                                <a href="{% url 'uml:diagrams' service class_name class_value %}">
+                                <p class="card-text text-white">{{class_value}}</p>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+    <p>No services are available.</p>
+    {% endif %}
+{% endblock %}
