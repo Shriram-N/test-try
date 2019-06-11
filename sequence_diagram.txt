@@ -1,0 +1,15 @@
+@startuml
+Participant PaymentTxnController
+Participant PaymentTxnManager
+Participant Search
+Participant PaymentTxnDAO
+Participant pg_transactions
+note left of TM:from controller to manager
+	PaymentTxnController->PaymentTxnManager
+note left of TM:from manager to entity
+	PaymentTxnManager->Search
+note left of TM:from entity to model
+	Search->PaymentTxnDAO
+note left of TM:from model to db
+	PaymentTxnDAO->pg_transactions
+@enduml

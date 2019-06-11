@@ -4,6 +4,7 @@ import os
 import re
 import ast
 import collections
+import time
 
 def services_list(request):
     service_list = []
@@ -144,14 +145,22 @@ def diagrams(request ,service, controller_name , method_name):
                 method_code.append(line)
 
         #look_for_any_import_class_keyword(dict(import_details))
-        for key,value in import_details.items():
-            for v in value:
-                for line in method_code:
-                    #print(v,line)
-                    if v.lower() in line.lower():
-                        print(key,v +"in the class")
+        # for key,value in import_details.items():
+        #     for v in value:
+        #         #print(key,v.lower())
+        #         for line in method_code:
+        #             if (v) not in (line):
+        #                 print(key,v,line +"in the class")
+
+        # parse the comments in function
+        class_code= map(lambda s: s.strip(), class_code)
+        class_code_string = ' '.join(class_code)
+        print(class_code_string)
+        method_comment_parser = print(str(re.findall(r'"""(.*?)"""', class_code_string)))
+        class_comment_parser =  print(str(re.findall(r"'''(.*?)'''", class_code_string)))
 
         #we should find list of  classes and the methods used in there
+
 
         #we should again parse for the particular method in that file
 
@@ -160,6 +169,44 @@ def diagrams(request ,service, controller_name , method_name):
 
         #we should
 
+    diagrams_list = ["Component diagram","Sequence digram","Input-Output Format","Entity diagram","Block Diagram"]
 
-    context = {}
+    context = {'diagrams_list':diagrams_list}
     return render(request, 'uml/diagrams.html', context)
+
+
+def sequence_diagrams(request ):
+    controller_name = "PaymentTxnController"
+    manager_name = "PaymentTxnManager"
+    entity_name = "Search"
+    model_name = "PaymentTxnDAO"
+    db_name = "pg_transactions"
+    service_name = "payment"
+    file_name = service_name+"_sequence_diagram.txt"
+    file_path = os.path.join(settings.FILES_DIR, file_name)
+
+    with open("sequence_diagram.txt", "w") as file:
+        file.write("@startuml"+"\n")
+        file.write("Participant "+controller_name+"\n")
+        file.write("Participant " + manager_name+"\n")
+        file.write("Participant " + entity_name+"\n")
+        file.write("Participant " + model_name+"\n")
+        file.write("Participant " + db_name+"\n")
+        file.write("note left of TM:from controller to manager"+"\n")
+        file.write("\t"+controller_name+"->"+manager_name+"\n")
+        file.write("note left of TM:from manager to entity"+"\n")
+        file.write("\t"+manager_name + "->" + entity_name+"\n")
+        file.write("note left of TM:from entity to model"+"\n")
+        file.write("\t"+entity_name + "->" + model_name+"\n")
+        file.write("note left of TM:from model to db"+"\n")
+        file.write("\t"+model_name + "->" + db_name+"\n")
+        file.write("@enduml"+"\n")
+
+    os.system("python -m plantuml "+"sequence_diagram.txt")
+
+    image_name = service_name+"_sequence_diagram.png"
+    #image_path = os.path.join(settings.FILES_DIR, image_name)
+    image_path ="sequence_diagram.png"
+
+    context = {'image_path':image_path}
+    return render(request, 'uml/sequence_diagrams.html', context)

@@ -1,0 +1,26 @@
+{% extends 'uml/base.html' %}
+
+
+{% block content %}
+    {% if diagrams_list%}
+
+        <div class = "container">
+            <div class="row mt-4">
+                {% for diagrams in diagrams_list %}
+                <div class="col-xs-0 col-md-4 mt-5">
+                    <a href="{% url 'uml:sequence_diagrams' %}">
+                        <div class="card text-white bg-success h-100" >
+
+                            <div class="card-body">
+                                <h5 class="card-title">{{ diagrams }}</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+    <p>No services are available.</p>
+    {% endif %}
+{% endblock %}
